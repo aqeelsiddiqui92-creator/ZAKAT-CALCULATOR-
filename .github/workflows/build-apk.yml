@@ -30,17 +30,12 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: Setup Android SDK & Accept Licenses
+      - name: Setup Android SDK
         uses: android-actions/setup-android@v3
-        with:
-          log-accepted-licenses: false
 
-      - name: Force Accept Android Licenses
+      - name: Auto Accept All SDK Licenses
         run: |
-          mkdir -p $ANDROID_HOME/licenses
-          echo -e "\n2446ee9b8d73a5d74b43e72e1a6406f4099d996e\n504667f4c0de7ff6a46347b3e344000d683eff33\nd56699a7a7491d73f29350a6256828a1c8750228\n84831b9409646a54c50e294b2737a346eb424c14\nf99176a99776a345d3e5506c7755d11f19d72d1d\n718d27abf26d8434354a5f4b79d2db181db0c5a6" > $ANDROID_HOME/licenses/android-sdk-license
-          echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > $ANDROID_HOME/licenses/android-sdk-preview-license
-          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          yes | sdkmanager --licenses || true
 
       - name: Build APK
         run: |
