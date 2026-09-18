@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zakat Calculator</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f3f7f9;margin:0;padding:18px}
+.box{max-width:650px;margin:auto;background:#fff;padding:20px;border-radius:18px;box-shadow:0 4px 18px #bbb}
+h1{text-align:center}.langs{text-align:center}
+button{padding:11px 15px;margin:4px;border:0;border-radius:9px;background:#0b4f6c;color:#fff;font-size:16px}
+label{display:block;font-weight:bold;margin-top:12px}
+input{width:100%;box-sizing:border-box;padding:11px;border:1px solid #bbb;border-radius:8px;font-size:16px}
+#calc{width:100%;margin-top:20px;background:#16734a}
+.result{margin-top:18px;padding:15px;background:#eef7f1;border-radius:10px}
+</style>
+</head>
+<body>
+<div class="box">
+<h1 id="title"></h1>
+<div class="langs">
+<button onclick="setL('en')">English</button>
+<button onclick="setL('ur')">اردو</button>
+<button onclick="setL('hi')">हिन्दी</button>
+</div>
+<label id="sl"></label><input id="s" type="number" step="any">
+<label id="gl"></label><input id="g" type="number" step="any">
+<label id="spl"></label><input id="sp" type="number" step="any">
+<label id="gpl"></label><input id="gp" type="number" step="any">
+<label id="cl"></label><input id="c" type="number" step="any">
+<button id="calc" onclick="calculate()"></button>
+<div class="result" id="r"></div>
+</div>
+<script>
+const T={
+en:{t:'Zakat Calculator',s:'Silver (grams)',g:'Gold (grams)',sp:'Silver price per kg',gp:'Gold price per 10 grams',c:'Cash / Savings / Other Zakatable Wealth',b:'Calculate Zakat',z:'Estimated Zakat (2.5%)',sv:'Silver value',gv:'Gold value',tw:'Total wealth'},
+ur:{t:'زکوٰۃ کیلکولیٹر',s:'چاندی (گرام)',g:'سونا (گرام)',sp:'چاندی کی قیمت فی کلو',gp:'سونے کی قیمت فی 10 گرام',c:'نقد رقم / بچت / دیگر قابلِ زکوٰۃ مال',b:'زکوٰۃ معلوم کریں',z:'زکوٰۃ (2.5٪)',sv:'چاندی کی قیمت',gv:'سونے کی قیمت',tw:'کل مال'},
+hi:{t:'ज़कात कैलकुलेटर',s:'चाँदी (ग्राम)',g:'सोना (ग्राम)',sp:'चाँदी की कीमत प्रति किलो',gp:'सोने की कीमत प्रति 10 ग्राम',c:'नकद / बचत / अन्य ज़कात योग्य संपत्ति',b:'ज़कात निकालें',z:'ज़कात (2.5%)',sv:'चाँदी का मूल्य',gv:'सोने का मूल्य',tw:'कुल संपत्ति'}
+};
+let L='en';
+function setL(x){
+ L=x;let t=T[x];
+ [['title','t'],['sl','s'],['gl','g'],['spl','sp'],['gpl','gp'],['cl','c'],['calc','b']]
+ .forEach(q=>document.getElementById(q[0]).textContent=t[q[1]]);
+}
+function n(x){return parseFloat(document.getElementById(x).value)||0}
+function calculate(){
+ let sv=n('s')*n('sp')/1000;
+ let gv=n('g')*n('gp')/10;
+ let tw=sv+gv+n('c');
+ let z=tw*.025,t=T[L];
+ document.getElementById('r').innerHTML=
+ '<b>'+t.sv+':</b> '+sv.toFixed(2)+'<br>'+
+ '<b>'+t.gv+':</b> '+gv.toFixed(2)+'<br>'+
+ '<b>'+t.tw+':</b> '+tw.toFixed(2)+'<br><br>'+
+ '<strong>'+t.z+': '+z.toFixed(2)+'</strong>';
+}
+setL('en');
+</script>
+</body>
+</html>
