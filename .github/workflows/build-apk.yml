@@ -24,7 +24,7 @@ jobs:
 
       - name: Accept Android SDK licenses
         run: |
-          yes | sdkmanager --licenses || true
+          yes | sdkmanager --licenses > /dev/null || true
 
       - name: Install Android SDK packages
         run: |
@@ -41,7 +41,7 @@ jobs:
           echo "=== Project files ==="
           ls -la
           echo "=== App files ==="
-          find app -maxdepth 5 -type f | sort
+          find app -maxdepth 6 -type f | sort
 
       - name: Build APK
         run: |
