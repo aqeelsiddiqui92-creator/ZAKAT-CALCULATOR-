@@ -1,61 +1,303 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Zakat Calculator</title>
 <style>
-body{font-family:Arial,sans-serif;background:#f3f7f9;margin:0;padding:18px}
-.box{max-width:650px;margin:auto;background:#fff;padding:20px;border-radius:18px;box-shadow:0 4px 18px #bbb}
-h1{text-align:center}.langs{text-align:center}
-button{padding:11px 15px;margin:4px;border:0;border-radius:9px;background:#0b4f6c;color:#fff;font-size:16px}
-label{display:block;font-weight:bold;margin-top:12px}
-input{width:100%;box-sizing:border-box;padding:11px;border:1px solid #bbb;border-radius:8px;font-size:16px}
-#calc{width:100%;margin-top:20px;background:#16734a}
-.result{margin-top:18px;padding:15px;background:#eef7f1;border-radius:10px}
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #061b3a, #0b4f6c);
+    color: #fff;
+    padding: 24px 14px;
+  }
+  .container { max-width: 720px; margin: auto; }
+  .card {
+    background: rgba(255,255,255,.10);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 15px 40px rgba(0,0,0,.25);
+  }
+  
+  /* Language Buttons Bar */
+  .lang-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 22px;
+  }
+  .lang-btn {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid #ffd54a;
+    border-radius: 10px;
+    background: transparent;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 0 !important;
+  }
+  .lang-btn.active-lang {
+    background: #ffd54a;
+    color: #111;
+  }
+
+  h1 { text-align:center; margin: 0 0 6px; font-size: 30px; }
+  .subtitle { text-align:center; margin: 0 0 22px; opacity:.85; }
+  label { display:block; margin: 14px 0 7px; font-weight:700; }
+  input {
+    width:100%; padding:13px 14px; border:0; border-radius:10px;
+    font-size:16px; outline:none;
+  }
+  button[type="submit"] {
+    width:100%; margin-top:20px; padding:14px; border:0; border-radius:10px;
+    background:#ffd54a; color:#111; font-size:18px; font-weight:700;
+    cursor:pointer;
+  }
+  button[type="submit"]:hover { filter:brightness(.95); }
+  .result {
+    margin-top:20px; padding:18px; border-radius:12px;
+    background:rgba(0,0,0,.22); line-height:1.8;
+  }
+  .zakat { font-size:25px; font-weight:800; margin-top:8px; }
+  .error { color:#ffd0d0; font-weight:700; }
+  .footer { text-align:center; margin-top:18px; font-weight:700; opacity:.9; }
+  
+  /* Language specific classes */
+  .lang-content { display: none; }
+  .lang-content.active { display: block; }
 </style>
 </head>
 <body>
-<div class="box">
-<h1 id="title"></h1>
-<div class="langs">
-<button onclick="setL('en')">English</button>
-<button onclick="setL('ur')">اردو</button>
-<button onclick="setL('hi')">हिन्दी</button>
+<div class="container">
+  <div class="card">
+    
+    <!-- Alag-alag Language Buttons -->
+    <div class="lang-buttons">
+      <button type="button" id="btn-en" class="lang-btn active-lang" onclick="switchLanguage('en')">English</button>
+      <button type="button" id="btn-ur" class="lang-btn" onclick="switchLanguage('ur')">اردو</button>
+      <button type="button" id="btn-hi" class="lang-btn" onclick="switchLanguage('hi')">हिन्दी</button>
+    </div>
+
+    <!-- ENGLISH SECTION -->
+    <div id="content-en" class="lang-content active">
+      <h1> 🕋Zakat Calculator</h1>
+      <p class="subtitle">Calculate your zakat</p>
+      <form id="zakatForm-en" class="zakatForm" data-lang="en">
+        <label>Weight of silver in grams</label>
+        <input type="number" class="sw" min="0" step="any" placeholder="Enter silver weight">
+
+        <label>Weight of gold in grams</label>
+        <input type="number" class="gw" min="0" step="any" placeholder="Enter gold weight">
+
+        <label>Price of 1 kg silver (₹)</label>
+        <input type="number" class="sp" min="0" step="any" placeholder="Enter silver price">
+
+        <label>Price of 10 gram gold (₹)</label>
+        <input type="number" class="gp" min="0" step="any" placeholder="Enter gold price">
+
+        <label>Total amount including savings (GPF, PPF, FD, cash, loan given, etc.) (₹)</label>
+        <input type="number" class="c" min="0" step="any" placeholder="Enter total amount">
+
+        <button type="submit">CALCULATE ZAKAT</button>
+      </form>
+    </div>
+
+    <!-- URDU SECTION -->
+    <div id="content-ur" class="lang-content" style="direction: rtl; text-align: right;">
+      <h1>🕋زکوٰۃ کیلکولیٹر </h1>
+      <p class="subtitle">تاج الشریعہ 👑</p>
+      <form id="zakatForm-ur" class="zakatForm" data-lang="ur">
+        <label>چاندی کا وزن گرام میں</label>
+        <input type="number" class="sw" min="0" step="any" placeholder="چاندی کا وزن درج کریں">
+
+        <label>سونے کا وزن گرام میں</label>
+        <input type="number" class="gw" min="0" step="any" placeholder="سونے کا وزن درج کریں">
+
+        <label>1 کلوگرام چاندی کی قیمت (₹)</label>
+        <input type="number" class="sp" min="0" step="any" placeholder="چاندی کی قیمت درج کریں">
+
+        <label>10 گرام سونے کی قیمت (₹)</label>
+        <input type="number" class="gp" min="0" step="any" placeholder="سونے کی قیمت درج کریں">
+
+        <label>کل رقم بشمول بچت (GPF، PPF، FD، کیش، قرض دی گئی رقم وغیرہ) (₹)</label>
+        <input type="number" class="c" min="0" step="any" placeholder="کل رقم درج کریں">
+
+        <button type="submit">زکوٰۃ کا حساب لگائیں</button>
+      </form>
+    </div>
+
+    <!-- HINDI SECTION -->
+    <div id="content-hi" class="lang-content">
+      <h1>🕋 ज़कात कैलकुलेटर</h1>
+      <p class="subtitle">ज़कात निकालिए</p>
+      <form id="zakatForm-hi" class="zakatForm" data-lang="hi">
+        <label>ग्राम में चांदी का वजन</label>
+        <input type="number" class="sw" min="0" step="any" placeholder="चांदी का वजन दर्ज करें">
+
+        <label>ग्राम में सोने का वजन</label>
+        <input type="number" class="gw" min="0" step="any" placeholder="सोने का वजन दर्ज करें">
+
+        <label>1 किलो चांदी की कीमत (₹)</label>
+        <input type="number" class="sp" min="0" step="any" placeholder="चांदी की कीमत दर्ज करें">
+
+        <label>10 ग्राम सोने की कीमत (₹)</label>
+        <input type="number" class="gp" min="0" step="any" placeholder="सोने की कीमत दर्ज करें">
+
+        <label>बचत सहित कुल राशि (GPF, PPF, FD, नकद, दिया गया ऋण, आदि) (₹)</label>
+        <input type="number" class="c" min="0" step="any" placeholder="कुल राशि दर्ज करें">
+
+        <button type="submit">ज़कात की गणना करें</button>
+      </form>
+    </div>
+
+    <div id="result" class="result" style="display:none"></div>
+    <div class="footer">*** GHULAM E TAJUSHSHARIYAH ***</div>
+  </div>
 </div>
-<label id="sl"></label><input id="s" type="number" step="any">
-<label id="gl"></label><input id="g" type="number" step="any">
-<label id="spl"></label><input id="sp" type="number" step="any">
-<label id="gpl"></label><input id="gp" type="number" step="any">
-<label id="cl"></label><input id="c" type="number" step="any">
-<button id="calc" onclick="calculate()"></button>
-<div class="result" id="r"></div>
-</div>
+
 <script>
-const T={
-en:{t:'Zakat Calculator',s:'Silver (grams)',g:'Gold (grams)',sp:'Silver price per kg',gp:'Gold price per 10 grams',c:'Cash / Savings / Other Zakatable Wealth',b:'Calculate Zakat',z:'Estimated Zakat (2.5%)',sv:'Silver value',gv:'Gold value',tw:'Total wealth'},
-ur:{t:'زکوٰۃ کیلکولیٹر',s:'چاندی (گرام)',g:'سونا (گرام)',sp:'چاندی کی قیمت فی کلو',gp:'سونے کی قیمت فی 10 گرام',c:'نقد رقم / بچت / دیگر قابلِ زکوٰۃ مال',b:'زکوٰۃ معلوم کریں',z:'زکوٰۃ (2.5٪)',sv:'چاندی کی قیمت',gv:'سونے کی قیمت',tw:'کل مال'},
-hi:{t:'ज़कात कैलकुलेटर',s:'चाँदी (ग्राम)',g:'सोना (ग्राम)',sp:'चाँदी की कीमत प्रति किलो',gp:'सोने की कीमत प्रति 10 ग्राम',c:'नकद / बचत / अन्य ज़कात योग्य संपत्ति',b:'ज़कात निकालें',z:'ज़कात (2.5%)',sv:'चाँदी का मूल्य',gv:'सोने का मूल्य',tw:'कुल संपत्ति'}
-};
-let L='en';
-function setL(x){
- L=x;let t=T[x];
- [['title','t'],['sl','s'],['gl','g'],['spl','sp'],['gpl','gp'],['cl','c'],['calc','b']]
- .forEach(q=>document.getElementById(q[0]).textContent=t[q[1]]);
-}
-function n(x){return parseFloat(document.getElementById(x).value)||0}
-function calculate(){
- let sv=n('s')*n('sp')/1000;
- let gv=n('g')*n('gp')/10;
- let tw=sv+gv+n('c');
- let z=tw*.025,t=T[L];
- document.getElementById('r').innerHTML=
- '<b>'+t.sv+':</b> '+sv.toFixed(2)+'<br>'+
- '<b>'+t.gv+':</b> '+gv.toFixed(2)+'<br>'+
- '<b>'+t.tw+':</b> '+tw.toFixed(2)+'<br><br>'+
- '<strong>'+t.z+': '+z.toFixed(2)+'</strong>';
-}
-setL('en');
+  // Function to switch language via separate buttons
+  function switchLanguage(lang) {
+    // Hide all contents and remove active class from buttons
+    document.querySelectorAll(".lang-content").forEach(el => el.classList.remove("active"));
+    document.querySelectorAll(".lang-btn").forEach(btn => btn.classList.remove("active-lang"));
+    
+    // Show selected language content and highlight button
+    document.getElementById("content-" + lang).classList.add("active");
+    document.getElementById("btn-" + lang).classList.add("active-lang");
+    
+    // Hide result box when switching language
+    document.getElementById("result").style.display = "none";
+  }
+
+  // Handle calculation for all forms
+  document.querySelectorAll(".zakatForm").forEach(form => {
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+      const lang = this.getAttribute("data-lang");
+      
+      const sq = Number(this.querySelector(".sw").value) || 0;
+      const gq = Number(this.querySelector(".gw").value) || 0;
+      const sp = Number(this.querySelector(".sp").value) || 0;
+      const gp = Number(this.querySelector(".gp").value) || 0;
+      const c  = Number(this.querySelector(".c").value) || 0;
+      const result = document.getElementById("result");
+
+      const x = gq * gp / 10 + sq * sp / 1000 + c;
+
+      if ((sq > 0 || c > 0) && sp === 0) {
+        result.style.display = "block";
+        if (lang === 'ur') {
+          result.innerHTML = '<div class="error">براہ کرم چاندی کی قیمت درج کریں۔</div>';
+        } else if (lang === 'hi') {
+          result.innerHTML = '<div class="error">कृपया चांदी की कीमत दर्ज करें।</div>';
+        } else {
+          result.innerHTML = '<div class="error">Please enter silver price.</div>';
+        }
+        return;
+      }
+
+      if (gq !== 0 && gp === 0) {
+        result.style.display = "block";
+        if (lang === 'ur') {
+          result.innerHTML = '<div class="error">براہ کرم سونے کی قیمت درج کریں۔</div>';
+        } else if (lang === 'hi') {
+          result.innerHTML = '<div class="error">कृपया सोने की कीमत दर्ज करें।</div>';
+        } else {
+          result.innerHTML = '<div class="error">Please enter gold price.</div>';
+        }
+        return;
+      }
+
+      let html = "";
+
+      if (sq !== 0 || c !== 0) {
+        const nisab = 0.653184 * sp;
+
+        if (x < nisab) {
+          if (lang === 'ur') {
+            html += "آپ صاحبِ نصاب نہیں ہیں۔<br>";
+            html += "نصاب کی رقم = ₹" + nisab.toFixed(2) + "<br>";
+            html += "آپ کی کل رقم = ₹" + x.toFixed(2) + "<br>";
+            html += '<div class="zakat">آپ کی کل زکوٰۃ = ₹0.00</div>';
+          } else if (lang === 'hi') {
+            html += "आप साहिबे निसाब नहीं हैं।<br>";
+            html += "निशाब राशि = ₹" + nisab.toFixed(2) + "<br>";
+            html += "आपकी कुल राशि = ₹" + x.toFixed(2) + "<br>";
+            html += '<div class="zakat">आपकी कुल जकात = ₹0.00</div>';
+          } else {
+            html += "You are not malike nisab.<br>";
+            html += "NISAB AMOUNT = ₹" + nisab.toFixed(2) + "<br>";
+            html += "YOUR TOTAL AMOUNT = ₹" + x.toFixed(2) + "<br>";
+            html += '<div class="zakat">YOUR TOTAL ZAKAT = ₹0.00</div>';
+          }
+        } else {
+          const y = x / 40;
+          if (lang === 'ur') {
+            html += "چاندی کی قیمت = ₹" + (sp * sq / 1000).toFixed(2) + "<br>";
+            html += "سونے کی قیمت = ₹" + (gq * gp / 10).toFixed(2) + "<br>";
+            html += "کل رقم (کیش، ڈیپازیٹ، دیا گیا قرض) = ₹" + c.toFixed(2) + "<br>";
+            html += "کل رقم = ₹" + x.toFixed(2) + "<br>";
+            html += '<div class="zakat">آپ کی کل زکوٰۃ = ₹' + y.toFixed(2) + "</div>";
+          } else if (lang === 'hi') {
+            html += "चांदी की कीमत = ₹" + (sp * sq / 1000).toFixed(2) + "<br>";
+            html += "सोने की कीमत = ₹" + (gq * gp / 10).toFixed(2) + "<br>";
+            html += "कुल राशि (नकद, जमा, दिया गया ऋण) = ₹" + c.toFixed(2) + "<br>";
+            html += "कुल राशि = ₹" + x.toFixed(2) + "<br>";
+            html += '<div class="zakat">आपकी कुल जकात = ₹' + y.toFixed(2) + "</div>";
+          } else {
+            html += "PRICE OF SILVER = ₹" + (sp * sq / 1000).toFixed(2) + "<br>";
+            html += "PRICE OF GOLD = ₹" + (gq * gp / 10).toFixed(2) + "<br>";
+            html += "TOTAL RS (CASH, DEPOSIT, LOAN GIVEN) = ₹" + c.toFixed(2) + "<br>";
+            html += "TOTAL AMOUNT = ₹" + x.toFixed(2) + "<br>";
+            html += '<div class="zakat">YOUR TOTAL ZAKAT = ₹' + y.toFixed(2) + "</div>";
+          }
+        }
+      }
+
+      if (sq === 0 && c === 0) {
+        const goldNisab = 9.3312 * gp;
+
+        if (x < goldNisab) {
+          if (lang === 'ur') {
+            html += "آپ صاحبِ نصاب نہیں ہیں۔<br>";
+            html += "زکوٰۃ کے لیے کم از کم 93.312 گرام سونا ضروری ہے۔<br>";
+          } else if (lang === 'hi') {
+            html += "आप साहिबे निसाब नहीं हैं।<br>";
+            html += "जकात के लिए कम से कम 93.312 ग्राम सोना आवश्यक है।<br>";
+          } else {
+            html += "You are not malike nisab.<br>";
+            html += "Minimum 93.312 gm gold is required for zakat.<br>";
+          }
+        } else {
+          const y = x / 40;
+          if (lang === 'ur') {
+            html += '<div class="zakat">آپ کی کل زکوٰۃ = ₹' + y.toFixed(2) + "</div>";
+          } else if (lang === 'hi') {
+            html += '<div class="zakat">आपकी कुल जकात = ₹' + y.toFixed(2) + "</div>";
+          } else {
+            html += '<div class="zakat">YOUR TOTAL ZAKAT = ₹' + y.toFixed(2) + "</div>";
+          }
+        }
+      }
+
+      result.style.display = "block";
+      if (lang === 'ur') {
+        result.innerHTML = html || "براہ کرم اپنی قیمتیں درج کریں۔";
+      } else if (lang === 'hi') {
+        result.innerHTML = html || "कृपया अपने मान (values) दर्ज करें।";
+      } else {
+        result.innerHTML = html || "Please enter your values.";
+      }
+    });
+  });
 </script>
 </body>
 </html>
